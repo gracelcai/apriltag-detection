@@ -4,7 +4,8 @@ import glob
  
 # termination criteria
 criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
- 
+
+width = 21.5 # in mm
 # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
 objp = np.zeros((6*9,3), np.float32)
 objp[:,:2] = np.mgrid[0:9,0:6].T.reshape(-1,2)
@@ -35,6 +36,23 @@ for fname in images:
     cv.waitKey(500)
     
     # cv.destroyAllWindows()
-    if len(objpoints) == len(imgpoints):
-        ret, mtx, dist, rvecs, tvecs = cv.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
-        print(mtx)
+ret, K, dist, rvecs, tvecs = cv.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
+
+fx = K[0,0]
+fy = K[1,1]
+cx = K[0,2]
+cy = K[1,2]
+
+params = (fx, fy, cx, cy)
+
+print()
+print('all units below measured in pixels:')
+print('  fx = {}'.format(K[0,0]))
+print('  fy = {}'.format(K[1,1]))
+print('  cx = {}'.format(K[0,2]))
+print('  cy = {}'.format(K[1,2]))
+print()
+print('pastable into Python:')
+print('  fx, fy, cx, cy = {}'.format(repr(params)))
+print()
+
